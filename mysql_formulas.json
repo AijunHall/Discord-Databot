@@ -1,0 +1,12 @@
+{
+  "insert_messages" : "INSERT INTO messages (message_id, user_id, server_id, channel_id, message_datetime, message_content) VALUES (%s, %s, %s, %s, %s, %s)",
+  "insert_attachments" : "INSERT INTO attachments (message_id, user_id, server_id, channel_id, attachment_datetime, attachment_content) VALUES (%s, %s, %s, %s, %s, %s)",
+  "insert_servers" : "INSERT INTO servers (server_id, channel_count, user_count, message_count, attachment_count) VALUES (%s, %s, %s, %s, %s)",
+  "insert_channels" : "INSERT INTO channels (channel_id, server_id, message_count, attachment_count) VALUES (%s, %s, %s, %s)",
+  "insert_users" : "INSERT INTO users (user_id, server_count, message_count, attachment_count) VALUES (%s, %s, %s, %s)",
+  "delete_messages" : "DELETE FROM messages WHERE server_id = ",
+  "delete_attachments" : "DELETE FROM attachments WHERE server_id = ",
+  "delete_servers" : "DELETE FROM servers WHERE server_id = ",
+  "delete_channels" : "DELETE FROM channels WHERE server_id = ",
+  "delete_users" : "DELETE FROM users WHERE user_id = "
+}

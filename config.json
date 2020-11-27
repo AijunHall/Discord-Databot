@@ -1,0 +1,14 @@
+{
+  "mySQL" :
+    {
+      "host" : "localhost",
+      "user" : "root",
+      "database" : "databot"
+    },
+  "discord_bot" :
+    {
+      "command_prefix" : ">>",
+      "activity_status" : "...",
+      "loop_buffer" : "6"
+    }
+}

@@ -8,7 +8,6 @@
   "discord_bot" :
     {
       "command_prefix" : ">>",
-      "activity_status" : "...",
-      "loop_buffer" : "6"
+      "activity_status" : "..."
     }
 }

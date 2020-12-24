@@ -226,14 +226,19 @@ class DiscordReader:
 
                 self.mydb.commit()
 
-            for guild in self.client.guilds:
-
-                guild_id = guild.id
-
+            def _empty_mysql_tables(guild_id):
+                '''
+                Wipe entire database
+                '''
                 self.mycursor.execute(f"{self.mysql_formulas['delete_servers']}{guild_id}")
                 self.mycursor.execute(f"{self.mysql_formulas['delete_messages']}{guild_id}")
                 self.mycursor.execute(f"{self.mysql_formulas['delete_attachments']}{guild_id}")
                 self.mycursor.execute(f"{self.mysql_formulas['delete_channels']}{guild_id}")
+
+            all_visible_guilds = self.client.guilds
+            for guild in all_visible_guilds:
+
+                _empty_mysql_tables(guild.id)
 
                 print(f'Reading [{guild.name}] history...\n')
 
@@ -242,6 +247,7 @@ class DiscordReader:
                 for channel in guild.text_channels:
                     try:
                         print(f'Reading #{channel} message history...')
+                        self.channels_scanned.append(channel.id)
                         all_channel_history += await channel.history(limit=None).flatten()
                         print(f'Finished reading #{channel} message history\n')
                     except discord.Forbidden:
@@ -250,11 +256,11 @@ class DiscordReader:
                 for message in tuple(all_channel_history):
                     self.format_message(message)
 
-                print('Finished reading server history\n')
-
                 _fill_mysql_servers(guild)
                 _fill_mysql_channels(guild)
                 _fill_mysql_users(guild)
+
+                print('Finished reading server history\n')
 
             print('Finished database entry\n')
 
@@ -263,15 +269,18 @@ class DiscordReader:
             print('Bot is running')
 
             await self.client.change_presence(activity=discord.Game(activity_status))
-            #await initialize_database()
 
+            if self.initialized == False:
+                self.initialized = True
+                await initialize_database()
+                
         @self.client.event
         async def on_message(message):
             if message.author.id == 188701887451627520 and message.content == '>>shutdown':
                 print('Bot shutdown')
                 await self.client.logout()
 
-            elif message.guild != None:                
+            elif message.guild != None and message.channel.id in self.channels_scanned:
                 self.format_message(message)
 
         @self.client.event
@@ -298,6 +307,9 @@ class DiscordReader:
 
     def __init__(self):
         config = Config()
+
+        self.initialized = False
+        self.channels_scanned = []
 
         self.mydb = mysql.connector.connect(
 
